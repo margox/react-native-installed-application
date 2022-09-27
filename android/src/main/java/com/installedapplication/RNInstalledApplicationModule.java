@@ -57,7 +57,7 @@ public class RNInstalledApplicationModule extends ReactContextBaseJavaModule {
         Drawable icon = pm.getApplicationIcon(packageInfo.applicationInfo);
         appInfo.putString("icon", Utility.convert(icon));
 
-        Boolean isSystemApp = (packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0
+        Boolean isSystemApp = (packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
         appInfo.putBoolean("isSystemApp", isSystemApp);
 
         String apkDir = packageInfo.applicationInfo.publicSourceDir;
