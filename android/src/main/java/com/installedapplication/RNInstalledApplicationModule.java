@@ -9,8 +9,10 @@ import com.facebook.react.bridge.WritableMap;
 import com.facebook.react.bridge.WritableArray;
 import com.facebook.react.bridge.Arguments;
 
+import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.ResolveInfo;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 
@@ -41,26 +43,24 @@ public class RNInstalledApplicationModule extends ReactContextBaseJavaModule {
   public void getApps(Promise promise) {
     try {
       PackageManager pm = this.reactContext.getPackageManager();
-      List<PackageInfo> pList = pm.getInstalledPackages(0);
+      Intent intent = new Intent(Intent.ACTION_MAIN, null);
+      intent.addCategory(Intent.CATEGORY_LAUNCHER);
+      List<ResolveInfo> pList = pm.queryIntentActivities(intent, 0);
       WritableArray list = Arguments.createArray();
       for (int i = 0; i < pList.size(); i++) {
-        PackageInfo packageInfo = pList.get(i);
+        ApplicationInfo packageInfo = pList.get(i).activityInfo.applicationInfo;
         WritableMap appInfo = Arguments.createMap();
 
         appInfo.putString("packageName", packageInfo.packageName);
-        appInfo.putString("versionName", packageInfo.versionName);
-        appInfo.putDouble("versionCode", packageInfo.versionCode);
-        appInfo.putDouble("firstInstallTime", (packageInfo.firstInstallTime));
-        appInfo.putDouble("lastUpdateTime", (packageInfo.lastUpdateTime));
-        appInfo.putString("appName", ((String) packageInfo.applicationInfo.loadLabel(pm)).trim());
+        appInfo.putString("appName", ((String) packageInfo.loadLabel(pm)).trim());
 
-        Drawable icon = pm.getApplicationIcon(packageInfo.applicationInfo);
+        Drawable icon = pm.getApplicationIcon(packageInfo);
         appInfo.putString("icon", Utility.convert(icon));
 
-        Boolean isSystemApp = (packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
+        Boolean isSystemApp = (packageInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0;
         appInfo.putBoolean("isSystemApp", isSystemApp);
 
-        String apkDir = packageInfo.applicationInfo.publicSourceDir;
+        String apkDir = packageInfo.publicSourceDir;
         appInfo.putString("apkDir", apkDir);
 
         list.pushMap(appInfo);
