@@ -18,7 +18,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.HashMap;
-import java.io.File;
 
 import javax.annotation.Nullable;
 
@@ -58,12 +57,11 @@ public class RNInstalledApplicationModule extends ReactContextBaseJavaModule {
         Drawable icon = pm.getApplicationIcon(packageInfo.applicationInfo);
         appInfo.putString("icon", Utility.convert(icon));
 
+        Boolean isSystemApp = (packageInfo.applicationInfo.flags & ApplicationInfo.FLAG_SYSTEM) != 0
+        appInfo.putBoolean("isSystemApp", isSystemApp);
+
         String apkDir = packageInfo.applicationInfo.publicSourceDir;
         appInfo.putString("apkDir", apkDir);
-
-        File file = new File(apkDir);
-        double size = file.length();
-        appInfo.putDouble("size", size);
 
         list.pushMap(appInfo);
       }
@@ -96,10 +94,6 @@ public class RNInstalledApplicationModule extends ReactContextBaseJavaModule {
 
           String apkDir = packageInfo.applicationInfo.publicSourceDir;
           appInfo.putString("apkDir", apkDir);
-
-          File file = new File(apkDir);
-          double size = file.length();
-          appInfo.putDouble("size", size);
 
           list.pushMap(appInfo);
         }
@@ -134,10 +128,6 @@ public class RNInstalledApplicationModule extends ReactContextBaseJavaModule {
 
           String apkDir = packageInfo.applicationInfo.publicSourceDir;
           appInfo.putString("apkDir", apkDir);
-
-          File file = new File(apkDir);
-          double size = file.length();
-          appInfo.putDouble("size", size);
 
           list.pushMap(appInfo);
         }
